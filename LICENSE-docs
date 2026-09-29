@@ -1,0 +1,21 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 nobufumi-tego
+
+Scope: the learning materials in this repository -- every Markdown file
+(README*, lessons/, guides/, projects/, glossary*, data/README*, CONTRIBUTING*)
+and the Markdown cells of the notebooks in notebooks/.
+The source code (src/, tests/, firmware/, and code cells of the notebooks) is
+licensed under the MIT License in the LICENSE file.
+
+You are free to share (copy and redistribute in any medium or format) and adapt
+(remix, transform, and build upon) this material for any purpose, even
+commercially, as long as you give appropriate credit, provide a link to the
+license, and indicate if changes were made.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+日本語の要約: 学習用の文章（Markdown とノートブックの説明文）は CC BY 4.0 です。
+出典（このリポジトリ）を示せば、学校の授業や自由研究のまとめなどで自由にコピー・改変できます。
+プログラム（src/・tests/・firmware/・ノートブックのコード）は MIT ライセンスです（LICENSE を参照）。

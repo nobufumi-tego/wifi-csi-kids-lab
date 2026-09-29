@@ -1,13 +1,17 @@
 # ============================================================
-# このリポジトリは GitHub(private) へ push する = 外に出る。
-#   → 実名・連絡先・機微案件名を含むものは追跡しない。
+# This repository is public. Never commit recordings of real homes or people.
+# このリポジトリは公開されています。家や人の実際の記録はコミットしないこと。
 # ============================================================
 
-# 実名を含みうる入力データ・生素材（置くなら機微リポへ）
+# Your own recordings and generated samples stay on your computer.
+# 自分で測った記録と、生成したサンプルは自分の PC にだけ置く
+data/*
+!data/README.md
+!data/README.ja.md
 raw/
 private/
 
-# 再生成できるもの・大容量（バックアップ対象にもしない）
+# Large media / 大きなファイル
 *.mp4
 *.mov
 *.wav
@@ -21,15 +25,18 @@ __pycache__/
 venv/
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
 *.egg-info/
+.ipynb_checkpoints/
 
-# Node
-node_modules/
+# PlatformIO / Arduino build output
+.pio/
+build/
 
-# エディタ・OS
+# Editors / OS
 .vscode/
 .idea/
 .DS_Store
 
-# Claude Code のローカル設定（個人の権限設定はコミットしない）
+# Personal AI tool settings / 個人の AI ツール設定
 .claude/settings.local.json

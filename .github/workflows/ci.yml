@@ -1,0 +1,38 @@
+# Checks on every push and pull request: tests, lint, type check, notebooks run.
+# Commands match "For maintainers" in AGENTS.md.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 = oldest supported, 3.13 = recent
+        python-version: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Sync dependencies (fails if uv.lock is out of date)
+        run: uv sync --locked
+      - name: Tests (includes running the notebooks)
+        run: uv run pytest tests/ -v
+      - name: Lint
+        run: uv run ruff check src/ tests/
+      - name: Type check
+        run: uv run mypy src/
