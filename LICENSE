@@ -1,21 +1,27 @@
-MIT License
+Wi-Fi CSI Kids Lab — license overview / ライセンスの概要
+
+This repository uses two licenses (dual licensing):
+
+  Code  (src/, tests/, scripts/, firmware/, lab.py, start.*, notebook code cells)
+        -> MIT License                       see LICENSE-CODE
+  Documents (Markdown pages, notebook Markdown cells)
+        -> Creative Commons Attribution 4.0 International (CC BY 4.0)
+                                             see LICENSE-DOCS
+
+You may use, copy and adapt both, also in schools and for free-research reports,
+as long as you keep the copyright notice (code) or give credit (documents).
 
 Copyright (c) 2026 nobufumi-tego
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+----------------------------------------------------------------------
+日本語の要約
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+このリポジトリは 2 つのライセンスを使っています。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  プログラム（src/・tests/・scripts/・firmware/・lab.py・start.*・ノートブックのコード）
+        -> MIT ライセンス（LICENSE-CODE）
+  文章（Markdown のページ・ノートブックの説明文）
+        -> CC BY 4.0（LICENSE-DOCS）
+
+学校の授業や自由研究のまとめでも自由に使い、コピーし、書きかえられます。
+プログラムは著作権表示を残すこと、文章は出典（このリポジトリ）を示すことが条件です。

@@ -15,4 +15,12 @@ packet: `time_s`, `rssi_dbm`, `label`, then the amplitude of 56 subcarriers (`sc
 
 **Never share recordings of people.** Wi-Fi recordings can show when someone was
 home and what they were doing. Share graphs and numbers instead, and only with the
-agreement of the people you recorded. See the [safety guide](../guides/safety.md).
+agreement of the people you recorded. See the [safety page](../start_here/04_safety.md).
+
+---
+
+## 📍 Navigation
+
+| ← Prev | 🏠 Chapter | 📚 Home | Next → |
+|---|---|---|---|
+| [Home](../README.md) | [Home](../README.md) | [Home](../README.md) | [Home](../README.md) |

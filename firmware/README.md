@@ -7,7 +7,7 @@ English | [日本語](README.ja.md)
 | [`csi_tx/`](csi_tx/csi_tx.ino) | **S** (sender) | Sends a small ESP-NOW broadcast 100 times per second on Wi-Fi channel 11 |
 | [`csi_rx/`](csi_rx/csi_rx.ino) | **R** (receiver) | Measures the CSI of each packet from S and sends one text line to the PC |
 
-Step-by-step instructions (with a guardian): [Lesson 3](../lessons/3-build/README.md).
+Step-by-step instructions (with a guardian): [Lesson 3](../03_build/README.md).
 
 ## Quick facts
 
@@ -25,7 +25,7 @@ Step-by-step instructions (with a guardian): [Lesson 3](../lessons/3-build/READM
 - R only keeps packets whose content starts with this project's marker, so other
   Wi-Fi devices nearby are ignored.
 - Use boards whose module shows the Japanese **技適 (Giteki) mark**. Do not change the
-  antenna or transmit power. See [safety](../guides/safety.md).
+  antenna or transmit power. See [safety](../start_here/04_safety.md).
 
 ## Tested
 
