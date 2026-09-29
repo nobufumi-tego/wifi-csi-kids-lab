@@ -1,0 +1,22 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 nobufumi-tego
+
+Scope: the learning materials in this repository -- every Markdown file
+(README*, start_here/, 01_waves/ ... 06_free_research/, appendix/, glossary/,
+docs/, data/README*, DISCLAIMER*, CONTRIBUTING*) and the Markdown cells of the
+notebooks (*/notebooks/*.ipynb).
+The source code (src/, tests/, scripts/, firmware/, lab.py, start.*, and code cells
+of the notebooks) is licensed under the MIT License in the LICENSE-CODE file.
+
+You are free to share (copy and redistribute in any medium or format) and adapt
+(remix, transform, and build upon) this material for any purpose, even
+commercially, as long as you give appropriate credit, provide a link to the
+license, and indicate if changes were made.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+日本語の要約: 学習用の文章（Markdown とノートブックの説明文）は CC BY 4.0 です。
+出典（このリポジトリ）を示せば、学校の授業や自由研究のまとめなどで自由にコピー・改変できます。
+プログラム（src/・tests/・scripts/・firmware/・lab.py・start.*・ノートブックのコード）は MIT ライセンスです（LICENSE-CODE を参照）。

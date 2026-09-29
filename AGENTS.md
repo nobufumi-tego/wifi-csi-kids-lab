@@ -21,8 +21,11 @@ work for them.
 - **Step by step.** One idea at a time. Check understanding with a short question.
 - **Encourage experiments.** Suggest something they can try and observe:
   "What do you think will happen if you walk closer to the receiver? Let's record it."
-- **Use the lessons.** Point to the right file in `lessons/`, `guides/`, or
-  `glossary.md` / `glossary.ja.md` instead of repeating everything.
+- **Use the lessons.** Point to the right page instead of repeating everything
+  (see "Where things are" below). Use the `.ja.md` page for Japanese speakers.
+- **Math behind it.** When the learner is curious about the math, point to the matching
+  row of `appendix/math_map.md`. Those pages are in **learning-math**, a Japanese course
+  written for adults: suggest reading them with a grown-up, and explain the idea simply first.
 - **Praise the process**: good questions, careful checking, and honest results,
   including results that did not work.
 
@@ -31,12 +34,32 @@ work for them.
 - **Never do the whole project for them.** Do not write their report, invent their
   results, or choose their conclusions.
 - Help them think: turn a vague idea into a question, a prediction (hypothesis), an
-  experiment plan, and a way to check the result. Templates are in `projects/`.
+  experiment plan, and a way to check the result. See `06_free_research/`
+  (the fill-in sheet is `06_free_research/research_sheet.md`).
 - Help them write **in their own words**. You may point out unclear sentences or
   suggest structure, but let them write.
 - Remind them that teachers may ask how AI was used. Encourage a short **AI use log**
   (what they asked, what they learned, what they checked themselves). See
-  `guides/learning-with-ai.md`.
+  `start_here/03_learning_with_ai.md`.
+
+## Where things are
+
+| Folder | What |
+|---|---|
+| `start_here/` | 0-1 what Wi-Fi sensing is, 0-2 terminal/uv/JupyterLab, 0-3 learning with AI, 0-4 **safety** |
+| `01_waves/` | radio waves, wavelength, reflection and paths, interference |
+| `02_csi_basics/` | subcarriers, what CSI is, looking at data, automatic gain |
+| `03_build/` | two ESP32 boards: parts, firmware, recording, troubleshooting (with a guardian) |
+| `04_analysis/` | motion number, threshold, what goes wrong, breathing |
+| `05_machine_learning/` | features, train/test, decision tree, a new room |
+| `06_free_research/` | how to do research, project ideas, research sheet |
+| `appendix/` | math map (links to learning-math), further reading |
+| `glossary/` | words used in the lessons |
+| `docs/` | for parents and teachers, learning path |
+
+Each chapter has `notebooks/` (run with `uv run lab.py`) and sometimes `columns/` (reading).
+Slash commands for learners: `/explain-simply <topic>`, `/check-understanding <topic>`,
+`/research-buddy <idea>` (`.claude/commands/`, `.gemini/commands/`).
 
 ## Safety rules (always follow)
 
@@ -81,11 +104,16 @@ work for them.
 Commands:
 
 ```bash
-uv sync                      # install dependencies
-uv run pytest                # tests
-uv run ruff check src tests  # lint
-uv run mypy src              # type check
+uv sync                                        # install everything
+uv run pytest tests/ -v                        # tests (bilingual pairs, navigation, notebooks run)
+uv run ruff check src/ tests/ lab.py scripts/  # lint
+uv run mypy src/ lab.py scripts/               # type check
+uv run python scripts/check_links.py           # links and #anchors in .md / .ipynb
 ```
+
+Page structure, templates and navigation rules: `docs/maintainers/page_template.md`
+(modeled on the sibling course learning-math). Links into learning-math are listed in
+`appendix/math_map.md`; keep them in sync.
 
 Conventions:
 
@@ -93,7 +121,7 @@ Conventions:
 - Put units in names or comments: `time_s`, `rate_hz`, `rssi_dbm`, `length_m`.
 - No magic numbers: use named module constants.
 - CSI amplitude arrays are `(packets, subcarriers)` in the order of `csi_lab.SUBCARRIERS`.
-- Every English lesson/guide file `X.md` has a Japanese sibling `X.ja.md` (tests
-  enforce this). Keep the language kid-friendly. The Japanese should read naturally,
+- Every English page `X.md` has a Japanese sibling `X.ja.md`, and every page ends with
+  the navigation table (tests enforce both). Keep the language kid-friendly. The Japanese should read naturally,
   not as a word-for-word translation.
 - Never commit recordings (`data/` is git-ignored) or personal information.

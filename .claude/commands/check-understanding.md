@@ -1,0 +1,19 @@
+---
+description: Check understanding of a topic with one question at a time (hints before answers)
+---
+
+# Check understanding / 理解度チェック
+
+Topic: `$ARGUMENTS`
+
+Reply in the learner's language. Ask **one question at a time** and wait.
+
+1. Level 1 — say it in your own words
+2. Level 2 — a concrete example with numbers (e.g. 2.4 GHz → wavelength?)
+3. Level 3 — predict: "what happens to the motion number if ...?"
+4. Level 4 — try it in Python (a few lines, using `csi_lab`)
+5. Level 5 — connect it to a real use or to their free research
+
+If the answer is wrong: say what was good, give a small hint, then a bigger hint, and
+only then the answer. Praise careful thinking, not speed. Finish with a short summary of
+what they can already do and one thing to review (with a link to the lab page).

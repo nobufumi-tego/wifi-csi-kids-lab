@@ -1,0 +1,10 @@
+# Windows-bound scripts must keep CRLF line endings,
+# otherwise they fail to run on Windows after git clone on Mac/Linux.
+*.bat   text eol=crlf
+*.ps1   text eol=crlf working-tree-encoding=UTF-8
+
+# Unix shell scripts must keep LF.
+*.sh    text eol=lf
+
+# Default: let git auto-normalize text files.
+*       text=auto
