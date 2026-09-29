@@ -1,0 +1,163 @@
+#!/bin/sh
+# ============================================================
+# 機微ガード（pre-commit）— push されるリポジトリ用
+#
+# 2つを見る。どちらも「外へ出てから気づく」が許されないもの。
+#
+#   A. 機微案件名の混入（下記）
+#   B. `.local-only` 配下への新規ファイル追加
+#      マーカーはディレクトリ単位、git はリポジトリ単位で動くため、
+#      ルートで push すればマーカーの下も一緒に外へ出る。
+#      マーカーを持たないリポジトリでは B は自動的に何もしない。
+#      （旧 mixed 雛形を統合した。差は実行時に判定できるため）
+#
+# ■ A: 機微案件名の混入
+# 機微案件は**フォルダ名だけで「誰の何の記録か」が特定できる**ため、
+# 名前そのものを外へ出さない。
+# PII ガード（~/.claude/hooks/pii-guard.py）は連絡先の形をした文字列しか
+# 見ないので案件名は素通りする。ここはその穴を塞ぐ側にあたる。
+#
+# ■ なぜ Python を呼ばず sh で自己完結させるか
+#   守りたい相手は「Claude を経由しない手作業」である。pii-guard.py を
+#   呼ぶ実装にすると、Python が無い環境や dotfiles 未配置のマシンで
+#   **黙って無効化される**。効かない環境が守りたい環境と一致してしまう。
+#   判定規則が pii-guard.py と二重になる代償は、
+#   scripts/test_pre_commit_names.sh が両者の一致を検証して受け持つ。
+#
+# ■ 案件名をこのファイルに書かないこと
+#   このフックは push される。守りたい名前を守るための場所に書けば
+#   本末転倒になる。だから実行時にディレクトリを走査して求める。
+#
+# ■ 何を見るか
+#   ステージ済み差分の**追加行**と、**新規追加・リネームされたパス**だけ。
+#   既存行・既存パスは見ない。過去に入ってしまったものを毎コミット
+#   蒸し返しても直せず、フックが「いつも赤い」状態は無視を招くため。
+#   過去分の始末は別途 docs/tasks/backlog.md で扱う。
+#
+# 使い方（テスト用）:
+#   pre-commit --list-names   … 走査で得た案件名だけを出して終了する
+# ============================================================
+set -u
+
+#: 走査範囲。ホーム直下と、その1階層下（案件をまとめたフォルダの中）。
+#  pii-guard.py の SENSITIVE_NAME_SCAN_DEPTH と同じ値にすること。
+SCAN_DEPTH=2
+#: 短すぎる名前は一般語と衝突するので対象外。同 MIN_SENSITIVE_NAME_LEN。
+MIN_NAME_LEN=6
+
+#: そのディレクトリ自身が機微かを判定する（上位へは遡らない）。
+#  pii-guard.py の _is_sensitive_dir と同じ規則。
+#  パターンはいずれも一般語であり、案件を特定しないので書いてよい。
+is_sensitive_dir() {
+    _lower=$(printf '%s' "$1" | tr 'A-Z' 'a-z')
+    case "$_lower" in
+        *mentoring*|*/mentees/*|*/raw/*) return 0 ;;
+    esac
+    [ -e "$1/.local-only" ]
+}
+
+#: 機微案件を特定できるフォルダ名を実ディレクトリから集める。
+#  条件は pii-guard.py の _collect_sensitive_names と同じ:
+#  隠しディレクトリを除く / 長さ MIN_NAME_LEN 以上 / 区切りか数字を含む。
+#  区切り・数字の条件が無いと `Mentoring` のような一般語まで禁止語になり、
+#  文書で普通に使えなくなる。
+collect_names() {
+    find "$HOME" -mindepth 1 -maxdepth "$SCAN_DEPTH" \
+        -name '.*' -prune -o -type d -print 2>/dev/null |
+    while IFS= read -r _dir; do
+        _name=${_dir##*/}
+        [ "${#_name}" -ge "$MIN_NAME_LEN" ] || continue
+        case "$_name" in
+            *[-_0-9]*) ;;
+            *) continue ;;
+        esac
+        is_sensitive_dir "$_dir" && printf '%s\n' "$_name"
+    done | sort -u
+}
+
+if [ "${1:-}" = "--list-names" ]; then
+    collect_names
+    exit 0
+fi
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+
+#: リポジトリの根がローカル専用なら、そもそも外へ出ない。
+#  そちらは local-only 雛形（remote 拒否）の担当。
+[ -e "$root/.local-only" ] && exit 0
+
+#: 追加行の抽出。`+++ b/path` は差分ヘッダなので落とす。
+#  非ASCIIのパスがクォートされると一致が壊れるため quotepath=false を明示する。
+added_lines=$(git -c core.quotepath=false diff --cached -U0 --no-color 2>/dev/null \
+    | grep '^+' | grep -v '^+++')
+#: 追加とリネームを見る。リネームで配下へ入る形も同じ危険を持つ。
+new_paths=$(git -c core.quotepath=false diff --cached --name-only --diff-filter=AR 2>/dev/null)
+
+# --- A: 機微案件名の混入 ------------------------------------------------
+name_hits=""
+names=$(collect_names)
+if [ -n "$names" ]; then
+    haystack=$(printf '%s\n%s\n' "$added_lines" "$new_paths")
+    if [ -n "$(printf '%s' "$haystack" | tr -d '[:space:]')" ]; then
+        #: 名前に空白が含まれうるので while read で回す
+        #  （for のワード分割は壊れる）。
+        name_hits=$(printf '%s\n' "$names" | while IFS= read -r _name; do
+            [ -n "$_name" ] || continue
+            printf '%s\n' "$haystack" | grep -qF -- "$_name" && printf '%s\n' "$_name"
+        done)
+    fi
+fi
+
+# --- B: .local-only 配下への新規追加 ------------------------------------
+path_hits=""
+if [ -n "$new_paths" ]; then
+    #: 案件名をここに書かないこと（このフックは push されるため）。
+    markers=$(cd "$root" && find . -name .local-only -not -path './.git/*' 2>/dev/null)
+    if [ -n "$markers" ]; then
+        path_hits=$(printf '%s\n' "$markers" | while IFS= read -r _marker; do
+            [ -n "$_marker" ] || continue
+            _dir=$(dirname "$_marker")
+            _dir=${_dir#./}
+            #: ルート自身のマーカーは上で対象外にしてあるので、ここには来ない
+            [ "$_dir" = "." ] && continue
+            printf '%s\n' "$new_paths" | while IFS= read -r _file; do
+                case "$_file" in
+                    "$_dir"/*) printf '%s\n' "$_file" ;;
+                esac
+            done
+        done | sort -u)
+    fi
+fi
+
+# --- 報告 ---------------------------------------------------------------
+[ -z "$name_hits" ] && [ -z "$path_hits" ] && exit 0
+
+if [ -n "$name_hits" ]; then
+    echo "🚫 機微ガード: 機微案件のフォルダ名をコミットしようとしています。" >&2
+    echo "" >&2
+    printf '%s\n' "$name_hits" | sed 's/^/     /' >&2
+    echo "" >&2
+    echo "   このリポジトリは push されます。名前だけでも「誰の何の記録か」が" >&2
+    echo "   特定できるため、外へ出す前に必ず言い換えてください。" >&2
+    echo "" >&2
+    echo "   [A] 言い換える → 「機微リポ」「当該案件」等の一般名詞に置き換える。" >&2
+    echo "       索引が要るなら機微リポ側の参照台帳に置くこと。" >&2
+    echo "   [B] 誤検出だった → git commit --no-verify で通す。" >&2
+    echo "       （案件と無関係な同名フォルダを踏んだ場合など）" >&2
+fi
+
+if [ -n "$path_hits" ]; then
+    [ -n "$name_hits" ] && echo "" >&2
+    echo "🚫 機微ガード: .local-only 配下へ新規ファイルを追加しようとしています。" >&2
+    echo "" >&2
+    printf '%s\n' "$path_hits" | sed 's/^/     /' >&2
+    echo "" >&2
+    echo "   このリポジトリは push されます。追加すると GitHub へ出ます。" >&2
+    echo "   どちらかを選んでください:" >&2
+    echo "" >&2
+    echo "   [A] 機微情報である → .gitignore に追記して追跡しない。" >&2
+    echo "       ただし除外は保護ではない。除外した時点で保管先を決めること" >&2
+    echo "       （~/.config/crostini-backup/targets に入っているか確認する）。" >&2
+    echo "   [B] 公開してよい → git commit --no-verify で通す。" >&2
+fi
+exit 1

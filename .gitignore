@@ -1,0 +1,35 @@
+# ============================================================
+# このリポジトリは GitHub(private) へ push する = 外に出る。
+#   → 実名・連絡先・機微案件名を含むものは追跡しない。
+# ============================================================
+
+# 実名を含みうる入力データ・生素材（置くなら機微リポへ）
+raw/
+private/
+
+# 再生成できるもの・大容量（バックアップ対象にもしない）
+*.mp4
+*.mov
+*.wav
+*.m4a
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+
+# エディタ・OS
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code のローカル設定（個人の権限設定はコミットしない）
+.claude/settings.local.json
